@@ -1,6 +1,7 @@
 # Load necessary libraries
 library("igraph")
 library("networkD3")
+library("writexl")
 
 # Load necessary functions from local sources
 source("readToMatrix.R")
@@ -63,3 +64,42 @@ x <- rnorm(allDegrees)
 
 ## Plot the Histogram with the degree distribution.
 hist(x, breaks = 30, main = 'Protein Network Degree Histogram', xlab = 'degrees')
+
+# ---------------------------------------------------------------------
+
+# Connected Components of the Network
+
+cd <- component_distribution(network) 
+cdFrame <- as.data.frame(cd)
+
+lc <- largest_component(network)
+
+
+# yields 3 vectors:
+## membership: giving the cluster id to which each vertex belongs
+## csize: giving the sizes of the clusters
+## no: number of clusters
+cs <- components(network)
+membershipData <- as.data.frame(cs['membership'])
+csizeData <- as.data.frame(cs['csize'])
+write_xlsx(csizeData, "csizeData.xlsx")
+
+# top <- which.max(cs$csize)
+topThree <- order(cs$csize, decreasing=TRUE)[1:3]
+
+ranked1st <- topThree[1]
+ranked2nd <- topThree[2]
+ranked3rd <- topThree[3]
+
+vertices1 <- V(network)[cs$membership == ranked1st]
+vertices2 <- V(network)[cs$membership == ranked2nd]
+vertices3 <- V(network)[cs$membership == ranked3rd]
+
+subnet1 <- induced.subgraph(network, vertices1)
+subnet2 <- induced.subgraph(network, vertices2)
+subnet3 <- induced.subgraph(network, vertices3)
+
+simpleNetwork(as_data_frame(subnet1), zoom = T)
+simpleNetwork(as_data_frame(subnet2), zoom = T)
+simpleNetwork(as_data_frame(subnet3), zoom = T)
+
