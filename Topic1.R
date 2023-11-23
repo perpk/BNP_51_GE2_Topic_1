@@ -68,20 +68,9 @@ hist(x, breaks = 30, main = 'Protein Network Degree Histogram', xlab = 'degrees'
 # ---------------------------------------------------------------------
 
 # Connected Components of the Network
-
-cd <- component_distribution(network) 
-cdFrame <- as.data.frame(cd)
-
-lc <- largest_component(network)
-
-
-# yields 3 vectors:
-## membership: giving the cluster id to which each vertex belongs
-## csize: giving the sizes of the clusters
-## no: number of clusters
 cs <- components(network)
-membershipData <- as.data.frame(cs['membership'])
-csizeData <- as.data.frame(cs['csize'])
+membershipData <- as.data.frame(cs$membership)
+csizeData <- as.data.frame(cs$csize)
 write_xlsx(csizeData, "csizeData.xlsx")
 
 # top <- which.max(cs$csize)
@@ -101,5 +90,31 @@ subnet3 <- induced.subgraph(network, vertices3)
 
 simpleNetwork(as_data_frame(subnet1), zoom = T)
 simpleNetwork(as_data_frame(subnet2), zoom = T)
-simpleNetwork(as_data_frame(subnet3), zoom = T)
+simpleNetwork(as_data_frame(subnet3), zoom = T, linkDistance = 120, opacity = 100)
+
+# ---------------------------------------------------------------------
+
+# Density for subnet #3
+## Determine whether the network has loops
+hasLoops <- any(which_multiple(subnet3) == TRUE)
+
+## Calculate the density
+graph.density(subnet3, loops = hasLoops)
+
+# ---------------------------------------------------------------------
+
+# Shortest Paths
+
+sp_Q8CGI9_E9Q557 <- get.shortest.paths(network, 
+                                       from = V(network)['Q8CGI9'], 
+                                       to = V(network)['E9Q557'])
+
+sp_P39428_Q3THG9 <- get.shortest.paths(network, 
+                                       from = V(network)['P39428'], 
+                                       to = V(network)['Q3THG9'])
+
+
+# ---------------------------------------------------------------------
+
+
 
