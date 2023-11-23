@@ -116,5 +116,9 @@ sp_P39428_Q3THG9 <- get.shortest.paths(network,
 
 # ---------------------------------------------------------------------
 
+# DFS and BFS
+## Q9Z1N5
+dfs(subnet3, V(subnet3)['Q60680-1'])$order
+bfs(subnet3, V(subnet3)['Q60680-1'])$order
 
-
+calculateBetweenness(subnet3, descending = TRUE, N = 3)
